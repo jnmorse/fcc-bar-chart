@@ -3,7 +3,6 @@ import React from 'react'
 function tooltip(tip) {
   const height = 50
   const width = 150
-  console.log(tip)
 
   const pos = {
     x: tip.x + width < 1280 ? tip.x : tip.x - width,
