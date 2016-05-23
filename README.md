@@ -12,3 +12,9 @@ https://raw.githubusercontent.com/FreeCodeCamp/ProjectReferenceData/master/GDP-d
 1. I can see US Gross Domestic Product by quarter, over time.
 2. I can mouse over a bar and see a tooltip with the GDP amount and exact year
    month that bar represents.
+
+## Demo
+
+https://fcc-bar-chart.herokuapp.com/
+
+http://jnmorse.github.io/fcc-bar-chart/
