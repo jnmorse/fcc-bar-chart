@@ -6,28 +6,27 @@ import d3 from 'd3'
  * @TODO: Add ability to expand to show more data on hover
  */
 
- function Bar(props) {
-   const [xValue, yValue] = props.data
-   const formatCurrency = d3.format('$,.2f')
-   const formatDate = d3.time.format('%Y - %B')
+function Bar(props) {
+  const [xValue, yValue] = props.data
+  const formatCurrency = d3.format('$,.2f')
+  const formatDate = d3.time.format('%Y - %B')
 
-   const y = props.yScale(yValue)
-   const height = 700 - y
+  const y = props.yScale(yValue)
+  const height = 700 - y
 
-   const hoverState = event => props.onHover(
-     event,
-     formatDate(new Date(xValue)),
-     formatCurrency(yValue)
-   )
+  const hoverState = () => props.showTooltip(
+    formatDate(new Date(xValue)),
+    formatCurrency(yValue)
+  )
 
-   const defaultState = () => props.onLeave()
+   // const defaultState = () => props.hideTooltip()
 
-   return (
+  return (
      <rect
        className='bar'
        fill='blue'
        height={height}
-       onMouseLeave={defaultState}
+       onMouseLeave={props.hideTooltip}
        onMouseOver={hoverState}
        stroke='#3a0202'
        strokeWidth={1}
@@ -44,8 +43,8 @@ Bar.propTypes = {
   width: PropTypes.number,
   height: PropTypes.number,
   data: PropTypes.array,
-  onHover: PropTypes.func,
-  onLeave: PropTypes.func
+  showTooltip: PropTypes.func,
+  hideTooltip: PropTypes.func
 }
 
 export default Bar

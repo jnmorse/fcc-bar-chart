@@ -6,7 +6,6 @@ import valueScale from './value-scale'
 import bars from './bars'
 import tooltip from './tooltip'
 import d3 from 'd3'
-import './styles'
 
 class Chart extends Component {
   static propTypes = {
@@ -21,9 +20,11 @@ class Chart extends Component {
       width: 1280,
       height: 720
     },
-    tooltip: {
+    tooltipPos: {
       x: 0,
-      y: 0,
+      y: 0
+    },
+    tooltip: {
       show: false,
       date: null,
       money: null
@@ -53,19 +54,23 @@ class Chart extends Component {
       .call(yAxis)
   }
 
-  showTooltip(event, date, money) {
-    const pos = {
-      x: event.clientX,
-      y: event.clientY
-    }
-
+  getTooltipPosition(event) {
+    const pos = this._svg.getBoundingClientRect()
     this.setState({
-      tooltip: {
-        ...pos,
+      tooltipPos: {
+        x: event.clientX - pos.left,
+        y: event.clientY - pos.top
+      }
+    })
+  }
+
+  showTooltip(date, money) {
+    this.setState({
+      tooltip: Object.assign({}, this.state.tooltip, {
         date,
         money,
         show: true
-      }
+      })
     })
   }
 
@@ -85,14 +90,18 @@ class Chart extends Component {
         xScale: this.state.xScale,
         yScale: this.state.yScale,
         width: (1200 - 20) / api.data.length,
-        onHover: (...args) => this.showTooltip(...args),
-        onLeave: () => this.hideTooltip()
+        showTooltip: (...args) => this.showTooltip(...args),
+        hideTooltip: () => this.hideTooltip()
       }
 
       return (
         <figure>
           <header><h1>{api.name}</h1></header>
-          <svg {...this.state.svg}>
+          <svg
+            {...this.state.svg}
+            onMouseOver={this.getTooltipPosition.bind(this)}
+            ref={svg => { this._svg = svg }}
+          >
             <g>
               {bars(api.data, props)}
             </g>
@@ -109,7 +118,7 @@ class Chart extends Component {
               transform='translate(80, 0)'
             />
 
-            {tooltip(this.state.tooltip)}
+            {tooltip({...this.state.tooltip, ...this.state.tooltipPos })}
           </svg>
           <figcaption>
             <blockquote>

@@ -3,10 +3,11 @@ import React from 'react'
 function tooltip(tip) {
   const height = 50
   const width = 150
+  console.log(tip)
 
   const pos = {
-    x: tip.x + width < (1280 - 10) ? tip.x + 10 : tip.x - width - 10,
-    y: tip.y + height < (720 - 10) ? tip.y + 10 : tip.y - height - 10
+    x: tip.x + width < 1280 ? tip.x : tip.x - width,
+    y: tip.y + height < 720 ? tip.y : tip.y - height
   }
 
   if (tip.show) {
@@ -21,7 +22,7 @@ function tooltip(tip) {
 
         <text
           {...pos}
-          dx={10}
+          dx={5}
           dy={20}
           fill='black'
         >
@@ -30,7 +31,7 @@ function tooltip(tip) {
 
         <text
           {...pos}
-          dx={10}
+          dx={5}
           dy={40}
           fill='black'
         >{tip.money} Billion</text>

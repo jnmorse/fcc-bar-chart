@@ -4,23 +4,23 @@
 $icon-font-path: '~bootstrap-sass/assets/fonts/bootstrap/';
 @import '~bootstrap-sass/assets/stylesheets/bootstrap';
 
-:root {
-  font-family: Roboto, sans-serif;
-  font-size: 100%;
-}
-
-* {
-  line-height: 1.5em;
-}
-
-body {
-  background-color: $white;
-  color: $black;
+figure {
+  margin: auto;
 }
 
 header {
   text-align: center;
-  small {
-    margin-left: 0.5em;
+}
+
+.axis path,
+.axis line {
+  fill: none;
+  stroke: #020202;
+  stroke-width: 1px;
+}
+
+.bar {
+  &:hover {
+    fill: green
   }
 }
