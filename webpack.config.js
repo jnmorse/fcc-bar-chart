@@ -81,7 +81,7 @@ const CONFIG = {
     new htmlWebpackPlugin({
       hash: true,
       inject: true,
-      title: 'React Webpack',
+      title: 'FCC Bar Chart',
       template: './src/index.html'
     }),
     new webpack.DefinePlugin({
