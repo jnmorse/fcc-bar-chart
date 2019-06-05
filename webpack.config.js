@@ -6,10 +6,6 @@ require('dotenv').config()
 const TARGET = process.env.npm_lifecycle_event
 process.env.BABEL_ENV = TARGET
 
-// Extract sass files to css files
-var extractTextPlugin = require('extract-text-webpack-plugin')
-var extractSass = new extractTextPlugin('css/[name].css')
-
 // PostCSS
 const autoprefixer = require('autoprefixer')
 
@@ -17,8 +13,9 @@ const htmlWebpackPlugin = require('html-webpack-plugin')
 
 const CONFIG = {
   resolve: {
-    extensions: ['', '.js', '.jsx', '.scss']
+    extensions: ['.js', '.jsx', '.scss']
   },
+  mode: 'development',
   entry: {
     main: [
       path.resolve(__dirname, 'src/client'),
@@ -31,21 +28,28 @@ const CONFIG = {
     publicPath: '/'
   },
   module: {
-    loaders: [
+    rules: [
       {
         test: /\.jsx?$/,
         exclude: [/node_modules/, /server/, /test/],
-        loader: 'babel'
+        loader: 'babel-loader'
       },
 
       {
         test: /\.scss|\.sass$/,
         exclude: /node_modules/,
-        loaders: [
-          'style',
-          'css',
-          'postcss',
-          'sass'
+        use: [
+          'style-loader',
+          'css-loader',
+          {
+            loader: 'postcss-loader',
+            options: {
+              plugins: [
+                autoprefixer()
+              ]
+            }
+          },
+          'sass-loader'
         ]
       },
 
@@ -53,8 +57,8 @@ const CONFIG = {
         test: /.*\.(gif|png|jpe?g|svg)$/i,
         exclude: [/node_modules/, /src\/fonts/],
         loaders: [
-          'file?hash=sha512&digest=hex&name=images/[name].[ext]',
-          'image-webpack?{progressive:true, optimizationLevel: 7, '
+          'file-loader?hash=sha512&digest=hex&name=images/[name].[ext]',
+          'image-webpack-loader?{progressive:true, optimizationLevel: 7, '
             + 'interlaced: false, pngquant:{quality: "65-90", speed: 4}}'
         ]
       },
@@ -62,19 +66,13 @@ const CONFIG = {
       {
         test: /\.((woff2?|svg)(\?v=\d+\.\d+\.\d+))?$|(woff2?|svg|jpe?g|png|gif|ico)$/,
         exclude: /src\/images/,
-        loader: 'url?name=fonts/[name].[ext]&limit=10000'
+        loader: 'url-loader?name=fonts/[name].[ext]&limit=10000'
       },
 
       {
         test: /\.((ttf|eot)(\?v=[0-9]\.[0-9]\.[0-9]))|(ttf|eot)$/,
-        loader: 'file?name=fonts/[name].[ext]'
+        loader: 'file-loader?name=fonts/[name].[ext]'
       }
-    ]
-  },
-  sassLoader: {},
-  postcss: function() {
-    return [
-      autoprefixer({ browsers: ['last 2 versions'] })
     ]
   },
   plugins: [
@@ -83,9 +81,6 @@ const CONFIG = {
       inject: true,
       title: 'FCC Bar Chart',
       template: './src/index.html'
-    }),
-    new webpack.DefinePlugin({
-      'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV)
     })
   ]
 }
@@ -102,36 +97,14 @@ if (TARGET === 'serve' || !TARGET) {
       contentBase: 'public'
     },
     plugins: [
-      new webpack.HotModuleReplacementPlugin(),
-      new webpack.NoErrorsPlugin()
+      new webpack.HotModuleReplacementPlugin()
     ]
   })
 }
 
 else if (TARGET === 'build') {
-  CONFIG.module.loaders[1] = {
-    test: /\.(sass|scss)$/,
-    output: {},
-    exclude: /node_modules/,
-    loader: extractSass.extract([
-      'css',
-      'postcss',
-      'sass'
-    ])
-  }
-
   module.exports = merge(CONFIG, {
-    devtool: 'sourcemap',
-    plugins: [
-      new webpack.DefinePlugin({
-        'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV)
-      }),
-      extractSass,
-      new webpack.optimize.UglifyJsPlugin({
-        compress: {
-          warnings: false
-        }
-      })
-    ]
+    mode: 'production',
+    devtool: 'sourcemap'
   })
 }
